@@ -15,11 +15,9 @@ class ViewConcertListingTest extends TestCase
     /**
      * @test
      */
-    function userCanViewAConcertListing()
+    function userCanViewAPublishedConcertListing()
     {
-        // Arrange
-        // Create a concert
-        $concert = Concert::create([
+        $concert = factory(Concert::class)->states('published')->create([
             'title' => 'The Red Chord',
             'subtitle' => 'with Animosity and Lethargy',
             'date' => Carbon::parse('December 13, 2016 8:00pm'),
@@ -29,15 +27,11 @@ class ViewConcertListingTest extends TestCase
             'city' => 'Laraville',
             'state' => 'ON',
             'zip' => '17916',
-            'additional_information' => 'For tickets, call (555) 555-5555.'
+            'additional_information' => 'For tickets, call (555) 555-5555.',
         ]);
 
-        // Act
-        // View the concert listing
         $response = $this->get('/concerts/'.$concert->id);
 
-        // Assert
-        // See the concert details
         $response->assertStatus(200);
         $response->assertSee('The Red Chord');
         $response->assertSee('with Animosity and Lethargy');
@@ -49,6 +43,16 @@ class ViewConcertListingTest extends TestCase
         $response->assertSee('Laraville, ON 17916');
         $response->assertSee('For tickets, call (555) 555-5555.');
 
+    }
+
+    /**
+     * @test
+     */
+    function userCannotViewUnpublishedConcertListings()
+    {
+        $concert = factory(Concert::class)->states('unpublished')->create();
+        $response = $this->get('/concerts/'.$concert->id);
+        $response->assertStatus(404);
     }
 
 }
