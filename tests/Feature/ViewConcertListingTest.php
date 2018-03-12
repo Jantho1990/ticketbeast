@@ -2,11 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Concert;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ViewConcertListingTest extends TestCase
 {
+    use DatabaseMigrations;
 
     /**
      * @test
@@ -30,19 +34,20 @@ class ViewConcertListingTest extends TestCase
 
         // Act
         // View the concert listing
-        $this->visit('/concerts/'.$concert->id);
+        $response = $this->get('/concerts/'.$concert->id);
 
         // Assert
         // See the concert details
-        $this->see('The Red Chord');
-        $this->see('with Animosity and Lethargy');
-        $this->see('December 13, 2016');
-        $this->see('8:00pm');
-        $this->see('32.50');
-        $this->see('The Mosh Pit');
-        $this->see('123 Example Lane');
-        $this->see('Laraville, ON 17916');
-        $this->see('For tickets, call (555) 555-5555.');
+        $response->assertStatus(200);
+        $response->assertSee('The Red Chord');
+        $response->assertSee('with Animosity and Lethargy');
+        $response->assertSee('December 13, 2016');
+        $response->assertSee('8:00pm');
+        $response->assertSee('32.50');
+        $response->assertSee('The Mosh Pit');
+        $response->assertSee('123 Example Lane');
+        $response->assertSee('Laraville, ON 17916');
+        $response->assertSee('For tickets, call (555) 555-5555.');
 
     }
 
